@@ -104,7 +104,10 @@ app.mount("/static", StaticFiles(directory="."), name="static")
 
 @app.get("/")
 async def root():
-    return FileResponse("index.html")
+    return FileResponse("./index.html")
+@app.get("/styles.css")
+async def styles():
+    return FileResponse("./styles.css")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
