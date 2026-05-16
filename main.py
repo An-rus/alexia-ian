@@ -10,6 +10,9 @@ from langchain_core.messages import HumanMessage, AIMessage
 from fastapi import FastAPI
 from pydantic import BaseModel
 import uvicorn
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
 
 # 1. Cargar variables de entorno
 load_dotenv()
@@ -97,6 +100,11 @@ async def chat(body: Mensaje):
     return {"respuesta": respuesta}
 
 print("¡Alexia lista para recibir consultas!")
+app.mount("/static", StaticFiles(directory="."), name="static")
+
+@app.get("/")
+async def root():
+    return FileResponse("index.html")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
