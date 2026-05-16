@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -93,6 +93,9 @@
   </div>
 
   <script>
+    // ✅ URL actualizada a Railway
+    const API_URL = 'https://alexia-ian-production.up.railway.app/chat';
+
     function updateClock() {
       const now = new Date();
       document.getElementById('clock').textContent = now.toLocaleTimeString('es-MX', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
@@ -155,7 +158,7 @@
       appendMessage(escapeHtml(text), 'user');
       showTyping();
       try {
-        const res = await fetch('http://localhost:8000/chat', {
+        const res = await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ mensaje: text })
@@ -165,7 +168,7 @@
         appendMessage(escapeHtml(data.respuesta), 'alexia');
       } catch (err) {
         hideTyping();
-        appendMessage('⚠ Error de conexión. Verifica que el servidor esté activo en puerto 8000.', 'alexia');
+        appendMessage('⚠ Error de conexión con el servidor.', 'alexia');
       }
       document.getElementById('sendBtn').disabled = false;
       input.focus();
