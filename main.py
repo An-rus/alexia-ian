@@ -16,9 +16,7 @@ from langchain_chroma import Chroma
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import HumanMessage,  CORS
-from flask import Flask
-from flask_cors import
+from langchain_core.messages import HumanMessage, AIMenssage
 
 # ─── Logging ────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -182,6 +180,3 @@ async def health():
 # ─── Arranque ────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=False)
-app = Flask(__name__)
-CORS(app)
-
