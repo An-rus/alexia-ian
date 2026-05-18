@@ -33,6 +33,54 @@
       font-size: 16px;
     }
 
+    /* ===== INTRO VIDEO SPLASH ===== */
+    #intro-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    #intro-splash video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #skip-btn {
+      position: absolute;
+      bottom: 32px;
+      right: 20px;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.7);
+      font-family: var(--font-display);
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-transform: uppercase;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.2s;
+    }
+
+    #skip-btn:active { opacity: 0.6; }
+
+    #intro-splash.hidden {
+      animation: fadeOutSplash 0.6s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fadeOutSplash {
+      to { opacity: 0; transform: scale(1.03); }
+    }
+
+    /* ===== BACKGROUND ===== */
     .grid-bg {
       position: fixed;
       inset: 0;
@@ -102,18 +150,19 @@
       box-shadow: 0 0 12px var(--orange-glow);
       animation: pulse-ring 3s ease-in-out infinite;
       flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .logo-ring img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
     }
 
     @keyframes pulse-ring {
       0%, 100% { box-shadow: 0 0 12px var(--orange-glow); }
       50% { box-shadow: 0 0 22px var(--orange-glow); }
-    }
-
-    .logo-inner {
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 900;
-      color: var(--orange);
     }
 
     .brand-text { display: flex; flex-direction: column; }
@@ -252,6 +301,15 @@
       font-weight: 700;
       color: var(--orange);
       flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    /* Logo image inside message avatar */
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 3px;
     }
 
     .user-avatar {
@@ -401,6 +459,12 @@
 </head>
 <body>
 
+  <!-- ===== INTRO VIDEO SPLASH ===== -->
+  <div id="intro-splash">
+    <video id="intro-video" src="inicio.mp4" autoplay muted playsinline></video>
+    <button id="skip-btn" onclick="closeSplash()">Saltar ✕</button>
+  </div>
+
   <div class="grid-bg"></div>
   <div class="scanline"></div>
 
@@ -409,9 +473,8 @@
     <header class="mobile-header">
       <div class="header-brand">
         <div class="logo-ring">
-          <div class="logo-inner">
-            <img src="logo.jpg">
-          </div>
+          <!-- Logo image from repository -->
+          <img src="logo.png" alt="Alexia logo" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:var(--font-display);font-size:14px;font-weight:900;color:var(--orange)\'>A</span>'">
         </div>
         <div class="brand-text">
           <span class="brand-name">ALEXIA</span>
@@ -435,8 +498,8 @@
     <div class="messages" id="messages">
       <div class="message alexia">
         <div class="avatar">
-        <img src="/logo.jpg" alt="logo.jpg">
-          </div>
+          <img src="logo.png" alt="Alexia" onerror="this.outerHTML='A'">
+        </div>
         <div class="bubble">
           <span class="sender-name">ALEXIA</span>
           <p>Hola, soy yo, tu novia bot fav, como has estado?</p>
@@ -468,6 +531,29 @@
   <script>
     const API_URL = 'https://alexia-ian-production.up.railway.app/chat';
 
+    // ===== INTRO VIDEO =====
+    const splash = document.getElementById('intro-splash');
+    const introVideo = document.getElementById('intro-video');
+
+    function closeSplash() {
+      splash.classList.add('hidden');
+      setTimeout(() => splash.remove(), 650);
+    }
+
+    // Auto-close when video ends
+    introVideo.addEventListener('ended', closeSplash);
+
+    // Also close on tap/click anywhere on splash
+    splash.addEventListener('click', function(e) {
+      if (e.target !== document.getElementById('skip-btn')) {
+        closeSplash();
+      }
+    });
+
+    // Fallback: if video fails to load, close splash after 1s
+    introVideo.addEventListener('error', () => setTimeout(closeSplash, 800));
+
+    // ===== CLOCK =====
     function updateClock() {
       const now = new Date();
       document.getElementById('clock').textContent = now.toLocaleTimeString('es-MX', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
@@ -475,6 +561,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
+    // ===== CHAT =====
     function autoResize(el) {
       el.style.height = 'auto';
       el.style.height = Math.min(el.scrollHeight, 100) + 'px';
@@ -497,9 +584,21 @@
       const div = document.createElement('div');
       div.className = `message ${role}`;
       if (role === 'alexia') {
-        div.innerHTML = `<div class="avatar">A</div><div class="bubble"><span class="sender-name">ALEXIA</span><p>${text}</p></div>`;
+        div.innerHTML = `
+          <div class="avatar">
+            <img src="logo.png" alt="Alexia" onerror="this.outerHTML='A'">
+          </div>
+          <div class="bubble">
+            <span class="sender-name">ALEXIA</span>
+            <p>${text}</p>
+          </div>`;
       } else {
-        div.innerHTML = `<div class="bubble"><span class="sender-name">TÚ</span><p>${text}</p></div><div class="avatar user-avatar">T</div>`;
+        div.innerHTML = `
+          <div class="bubble">
+            <span class="sender-name">TÚ</span>
+            <p>${text}</p>
+          </div>
+          <div class="avatar user-avatar">T</div>`;
       }
       msgs.appendChild(div);
       scrollBottom();
@@ -510,7 +609,15 @@
       const div = document.createElement('div');
       div.className = 'message alexia';
       div.id = 'typing';
-      div.innerHTML = `<div class="avatar">A</div><div class="bubble typing-bubble"><span class="dot-1"></span><span class="dot-2"></span><span class="dot-3"></span></div>`;
+      div.innerHTML = `
+        <div class="avatar">
+          <img src="logo.png" alt="Alexia" onerror="this.outerHTML='A'">
+        </div>
+        <div class="bubble typing-bubble">
+          <span class="dot-1"></span>
+          <span class="dot-2"></span>
+          <span class="dot-3"></span>
+        </div>`;
       msgs.appendChild(div);
       scrollBottom();
     }
