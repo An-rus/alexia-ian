@@ -1,13 +1,10 @@
 {
-  "outputDirectory": "."
-}
-{
+  "outputDirectory": ".",
   "headers": [
     {
-      "source": "/inicio.mp4",
+      "source": "/public/inicio.mp4",
       "headers": [
         { "key": "Content-Type", "value": "video/mp4" }
       ]
     }
   ]
-}
