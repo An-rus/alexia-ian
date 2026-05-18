@@ -33,54 +33,6 @@
       font-size: 16px;
     }
 
-    /* ===== INTRO VIDEO SPLASH ===== */
-    #intro-splash {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    #intro-splash video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    #skip-btn {
-      position: absolute;
-      bottom: 32px;
-      right: 20px;
-      background: rgba(0,0,0,0.55);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: rgba(255,255,255,0.7);
-      font-family: var(--font-display);
-      font-size: 10px;
-      letter-spacing: 2px;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      text-transform: uppercase;
-      -webkit-tap-highlight-color: transparent;
-      transition: opacity 0.2s;
-    }
-
-    #skip-btn:active { opacity: 0.6; }
-
-    #intro-splash.hidden {
-      animation: fadeOutSplash 0.6s ease forwards;
-      pointer-events: none;
-    }
-
-    @keyframes fadeOutSplash {
-      to { opacity: 0; transform: scale(1.03); }
-    }
-
-    /* ===== BACKGROUND ===== */
     .grid-bg {
       position: fixed;
       inset: 0;
@@ -104,6 +56,48 @@
       z-index: 1;
     }
 
+    /* INTRO SPLASH */
+    #intro-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #intro-splash video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #skip-btn {
+      position: absolute;
+      bottom: 32px;
+      right: 20px;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.7);
+      font-family: var(--font-display);
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    #intro-splash.hidden {
+      animation: fadeOutSplash 0.6s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fadeOutSplash {
+      to { opacity: 0; }
+    }
+
     .app-shell {
       position: relative;
       z-index: 2;
@@ -113,7 +107,6 @@
       width: 100vw;
     }
 
-    /* ===== HEADER ===== */
     .mobile-header {
       display: flex;
       align-items: center;
@@ -151,13 +144,14 @@
       animation: pulse-ring 3s ease-in-out infinite;
       flex-shrink: 0;
       overflow: hidden;
+      padding: 0;
     }
 
     .logo-ring img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 50%;
+      display: block;
     }
 
     @keyframes pulse-ring {
@@ -209,16 +203,13 @@
       padding: 6px 10px;
       border-radius: 4px;
       cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
     }
 
     .clear-btn:active {
       border-color: var(--red);
       color: var(--red);
-      background: rgba(192,57,43,0.08);
     }
 
-    /* ===== STATUS BAR ===== */
     .status-bar {
       display: flex;
       gap: 16px;
@@ -260,7 +251,6 @@
       50% { opacity: 0.4; }
     }
 
-    /* ===== MESSAGES ===== */
     .messages {
       flex: 1;
       overflow-y: auto;
@@ -304,12 +294,11 @@
       overflow: hidden;
     }
 
-    /* Logo image inside message avatar */
     .avatar img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 3px;
+      display: block;
     }
 
     .user-avatar {
@@ -389,7 +378,6 @@
       50% { transform: translateY(-4px); opacity: 1; }
     }
 
-    /* ===== INPUT ===== */
     .input-area {
       padding: 10px 12px 20px;
       border-top: 1px solid var(--gray-border);
@@ -424,7 +412,6 @@
       line-height: 1.5;
       resize: none;
       max-height: 100px;
-      -webkit-appearance: none;
     }
 
     textarea::placeholder { color: #444; }
@@ -441,7 +428,6 @@
       justify-content: center;
       flex-shrink: 0;
       box-shadow: 0 0 10px rgba(255,77,0,0.3);
-      -webkit-tap-highlight-color: transparent;
       transition: transform 0.1s ease;
     }
 
@@ -459,9 +445,10 @@
 </head>
 <body>
 
-  <!-- ===== INTRO VIDEO SPLASH ===== -->
   <div id="intro-splash">
-    <video id="intro-video" src="inicio.mp4" autoplay muted playsinline></video>
+    <video id="intro-video" autoplay muted playsinline preload="auto">
+      <source src="/public/inicio.mp4" type="video/mp4">
+    </video>
     <button id="skip-btn" onclick="closeSplash()">Saltar ✕</button>
   </div>
 
@@ -473,8 +460,7 @@
     <header class="mobile-header">
       <div class="header-brand">
         <div class="logo-ring">
-          <!-- Logo image from repository -->
-          <img src="logo.png" alt="Alexia logo" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:var(--font-display);font-size:14px;font-weight:900;color:var(--orange)\'>A</span>'">
+          <img src="/public/logo.jpg" alt="Alexia">
         </div>
         <div class="brand-text">
           <span class="brand-name">ALEXIA</span>
@@ -498,7 +484,7 @@
     <div class="messages" id="messages">
       <div class="message alexia">
         <div class="avatar">
-          <img src="logo.png" alt="Alexia" onerror="this.outerHTML='A'">
+          <img src="/public/logo.jpg" alt="Alexia">
         </div>
         <div class="bubble">
           <span class="sender-name">ALEXIA</span>
@@ -531,7 +517,7 @@
   <script>
     const API_URL = 'https://alexia-ian-production.up.railway.app/chat';
 
-    // ===== INTRO VIDEO =====
+    // INTRO VIDEO
     const splash = document.getElementById('intro-splash');
     const introVideo = document.getElementById('intro-video');
 
@@ -540,20 +526,13 @@
       setTimeout(() => splash.remove(), 650);
     }
 
-    // Auto-close when video ends
     introVideo.addEventListener('ended', closeSplash);
-
-    // Also close on tap/click anywhere on splash
     splash.addEventListener('click', function(e) {
-      if (e.target !== document.getElementById('skip-btn')) {
-        closeSplash();
-      }
+      if (e.target !== document.getElementById('skip-btn')) closeSplash();
     });
-
-    // Fallback: if video fails to load, close splash after 1s
     introVideo.addEventListener('error', () => setTimeout(closeSplash, 800));
 
-    // ===== CLOCK =====
+    // CLOCK
     function updateClock() {
       const now = new Date();
       document.getElementById('clock').textContent = now.toLocaleTimeString('es-MX', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
@@ -561,7 +540,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // ===== CHAT =====
+    // CHAT
     function autoResize(el) {
       el.style.height = 'auto';
       el.style.height = Math.min(el.scrollHeight, 100) + 'px';
@@ -584,21 +563,9 @@
       const div = document.createElement('div');
       div.className = `message ${role}`;
       if (role === 'alexia') {
-        div.innerHTML = `
-          <div class="avatar">
-            <img src="logo.png" alt="Alexia" onerror="this.outerHTML='A'">
-          </div>
-          <div class="bubble">
-            <span class="sender-name">ALEXIA</span>
-            <p>${text}</p>
-          </div>`;
+        div.innerHTML = `<div class="avatar"><img src="/public/logo.jpg" alt="Alexia"></div><div class="bubble"><span class="sender-name">ALEXIA</span><p>${text}</p></div>`;
       } else {
-        div.innerHTML = `
-          <div class="bubble">
-            <span class="sender-name">TÚ</span>
-            <p>${text}</p>
-          </div>
-          <div class="avatar user-avatar">T</div>`;
+        div.innerHTML = `<div class="bubble"><span class="sender-name">TU</span><p>${text}</p></div><div class="avatar user-avatar">T</div>`;
       }
       msgs.appendChild(div);
       scrollBottom();
@@ -609,15 +576,7 @@
       const div = document.createElement('div');
       div.className = 'message alexia';
       div.id = 'typing';
-      div.innerHTML = `
-        <div class="avatar">
-          <img src="logo.png" alt="Alexia" onerror="this.outerHTML='A'">
-        </div>
-        <div class="bubble typing-bubble">
-          <span class="dot-1"></span>
-          <span class="dot-2"></span>
-          <span class="dot-3"></span>
-        </div>`;
+      div.innerHTML = `<div class="avatar"><img src="/public/logo.jpg" alt="Alexia"></div><div class="bubble typing-bubble"><span class="dot-1"></span><span class="dot-2"></span><span class="dot-3"></span></div>`;
       msgs.appendChild(div);
       scrollBottom();
     }
@@ -647,7 +606,7 @@
         appendMessage(escapeHtml(data.respuesta), 'alexia');
       } catch (err) {
         hideTyping();
-        appendMessage('⚠ Error de conexión con el servidor.', 'alexia');
+        appendMessage('Error de conexion con el servidor.', 'alexia');
       }
       document.getElementById('sendBtn').disabled = false;
       input.focus();
@@ -655,7 +614,7 @@
 
     function clearChat() {
       document.getElementById('messages').innerHTML = '';
-      appendMessage('Conversación reiniciada. ¿En qué puedo ayudarte?', 'alexia');
+      appendMessage('Conversacion reiniciada.', 'alexia');
     }
 
     function escapeHtml(text) {
