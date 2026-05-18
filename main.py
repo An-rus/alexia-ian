@@ -184,6 +184,13 @@ async def limpiar_sesion(session_id: str):
 @app.get("/health")
 async def health():
     return {"status": "ok", "sesiones_activas": len(sesiones)}
+@app.get("/debug")
+async def debug():
+    return {
+        "base_dir": BASE_DIR,
+        "index_exists": os.path.exists(os.path.join(BASE_DIR, "index.html")),
+        "files": os.listdir(BASE_DIR)
+    }
 
 # ─── Arranque ────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
