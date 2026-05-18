@@ -5,9 +5,9 @@ from collections import deque
 from uuid import uuid4
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 import uvicorn
 
@@ -71,7 +71,7 @@ def obtener_historial(session_id: str) -> deque:
         sesiones[session_id] = deque(maxlen=MAX_HISTORY * 2)
     return sesiones[session_id]
 
-# ─── Lógica de chat ───────────────────────────────────────────────────────────
+# ─── Lógica de chat ──────────────────────────────────────────────────────────
 def format_docs(docs) -> str:
     return "\n\n".join(doc.page_content for doc in docs)
 
@@ -107,14 +107,33 @@ def chat_con_alexia(mensaje_usuario: str, session_id: str) -> str:
 # ─── FastAPI ──────────────────────────────────────────────────────────────────
 app = FastAPI(title="Alexia Chatbot", version="1.0.0")
 
+# Middleware personalizado que maneja CORS antes que todo
+@app.middleware("http")
+async def cors_middleware(request: Request, call_next):
+    if request.method == "OPTIONS":
+        return JSONResponse(
+            content={},
+            headers={
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                "Access-Control-Allow-Headers": "*",
+                "Access-Control-Max-Age": "3600",
+            }
+        )
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=False,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
-    max_age=3600,
 )
+
 # ─── Modelos Pydantic ─────────────────────────────────────────────────────────
 class MensajeRequest(BaseModel):
     mensaje: str
@@ -138,19 +157,6 @@ async def styles():
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="styles.css no encontrado")
     return FileResponse(path)
-from fastapi import Request
-from fastapi.responses import JSONResponse
-
-@app.options("/chat")
-async def options_chat(request: Request):
-    return JSONResponse(
-        content={},
-        headers={
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "POST, OPTIONS",
-            "Access-Control-Allow-Headers": "*",
-        }
-    )
 
 @app.post("/chat", response_model=MensajeResponse)
 async def chat(body: MensajeRequest):
