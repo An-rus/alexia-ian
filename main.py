@@ -137,6 +137,19 @@ async def styles():
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail="styles.css no encontrado")
     return FileResponse(path)
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+@app.options("/chat")
+async def options_chat(request: Request):
+    return JSONResponse(
+        content={},
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        }
+    )
 
 @app.post("/chat", response_model=MensajeResponse)
 async def chat(body: MensajeRequest):
