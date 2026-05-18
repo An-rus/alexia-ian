@@ -16,7 +16,7 @@ from langchain_chroma import Chroma
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.messages import HumanMessage, AIMenssage
+from langchain_core.messages import HumanMessage, AIMessage
 
 # ─── Logging ────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -33,13 +33,13 @@ if not GOOGLE_API_KEY:
 
 # ─── Configuración ───────────────────────────────────────────────────────────
 DB_DIR = "./chroma_db"
-MAX_HISTORY = 10 # Número de PARES (humano + IA) a conservar
+MAX_HISTORY = 10
 RETRIEVER_K = 4
 
 if not os.path.exists(DB_DIR):
     raise FileNotFoundError(f"No se encontró la base de datos Chroma en: {DB_DIR}")
 
-# ─── Modelos (se crean UNA sola vez al arrancar) ─────────────────────────────
+# ─── Modelos ─────────────────────────────────────────────────────────────────
 logger.info("Cargando modelos y base de datos...")
 
 embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
@@ -63,19 +63,11 @@ Fecha y hora actual: {ahora}
 Contexto relevante:
 {context}"""
 
-prompt = ChatPromptTemplate.from_messages([
-    ("system", SYSTEM_TEMPLATE),
-    MessagesPlaceholder("chat_history"),
-    ("human", "{input}"),
-])
-
 # ─── Historial por sesión ────────────────────────────────────────────────────
-# Cada session_id tiene su propio deque de mensajes
 sesiones: dict[str, deque] = {}
 
 def obtener_historial(session_id: str) -> deque:
     if session_id not in sesiones:
-        # MAX_HISTORY pares → maxlen = MAX_HISTORY * 2 mensajes
         sesiones[session_id] = deque(maxlen=MAX_HISTORY * 2)
     return sesiones[session_id]
 
@@ -87,7 +79,6 @@ def chat_con_alexia(mensaje_usuario: str, session_id: str) -> str:
     ahora = datetime.now().strftime("%A, %d de %B de %Y a las %H:%M:%S")
     historial = obtener_historial(session_id)
 
-    # Prompt con fecha dinámica
     prompt_actual = ChatPromptTemplate.from_messages([
         ("system", SYSTEM_TEMPLATE.replace("{ahora}", ahora)),
         MessagesPlaceholder("chat_history"),
@@ -107,7 +98,6 @@ def chat_con_alexia(mensaje_usuario: str, session_id: str) -> str:
 
     respuesta = chain.invoke(mensaje_usuario)
 
-    # Guardar en historial (deque con maxlen gestiona el límite automáticamente)
     historial.append(HumanMessage(content=mensaje_usuario))
     historial.append(AIMessage(content=respuesta))
 
@@ -119,7 +109,7 @@ app = FastAPI(title="Alexia Chatbot", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # En producción, reemplaza con tu dominio
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -127,7 +117,7 @@ app.add_middleware(
 # ─── Modelos Pydantic ─────────────────────────────────────────────────────────
 class MensajeRequest(BaseModel):
     mensaje: str
-    session_id: str = "" # Opcional: el cliente puede omitirlo
+    session_id: str = ""
 
 class MensajeResponse(BaseModel):
     respuesta: str
@@ -154,7 +144,6 @@ async def chat(body: MensajeRequest):
     if not mensaje:
         raise HTTPException(status_code=400, detail="El mensaje no puede estar vacío")
 
-    # Generar session_id si el cliente no envió uno
     session_id = body.session_id or str(uuid4())
 
     try:
@@ -167,7 +156,6 @@ async def chat(body: MensajeRequest):
 
 @app.delete("/chat/{session_id}")
 async def limpiar_sesion(session_id: str):
-    """Borra el historial de una sesión específica."""
     if session_id in sesiones:
         del sesiones[session_id]
         return {"detail": f"Sesión {session_id} eliminada"}
