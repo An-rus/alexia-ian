@@ -1,4 +1,4 @@
-mport os
+import os
 import logging
 from datetime import datetime
 from collections import deque
@@ -188,3 +188,4 @@ async def health():
 # ─── Arranque ────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=False)
+
