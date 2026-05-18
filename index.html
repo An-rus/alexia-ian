@@ -461,9 +461,7 @@
 
   <!-- ===== INTRO VIDEO SPLASH ===== -->
   <div id="intro-splash">
-    <video id="intro-video" autoplay muted playsinline preload="auto">
-      <source src="/inicio.mp4" type="video/mp4">
-    </video>
+    <video id="intro-video" src="inicio.mp4" autoplay muted playsinline></video>
     <button id="skip-btn" onclick="closeSplash()">Saltar ✕</button>
   </div>
 
@@ -476,7 +474,7 @@
       <div class="header-brand">
         <div class="logo-ring">
           <!-- Logo image from repository -->
-          <img src="/logo.jpg" alt="Alexia logo" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:var(--font-display);font-size:14px;font-weight:900;color:var(--orange)\'>A</span>'">
+          <img src="logo.png" alt="Alexia logo" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:var(--font-display);font-size:14px;font-weight:900;color:var(--orange)\'>A</span>'">
         </div>
         <div class="brand-text">
           <span class="brand-name">ALEXIA</span>
@@ -500,7 +498,7 @@
     <div class="messages" id="messages">
       <div class="message alexia">
         <div class="avatar">
-          <img src="/logo.jpg" alt="Alexia" onerror="this.outerHTML='A'">
+          <img src="logo.png" alt="Alexia" onerror="this.outerHTML='A'">
         </div>
         <div class="bubble">
           <span class="sender-name">ALEXIA</span>
@@ -588,7 +586,7 @@
       if (role === 'alexia') {
         div.innerHTML = `
           <div class="avatar">
-            <img src="/logo.jpg" alt="Alexia" onerror="this.outerHTML='A'">
+            <img src="logo.png" alt="Alexia" onerror="this.outerHTML='A'">
           </div>
           <div class="bubble">
             <span class="sender-name">ALEXIA</span>
@@ -613,7 +611,7 @@
       div.id = 'typing';
       div.innerHTML = `
         <div class="avatar">
-          <img src="/logo.jpg" alt="Alexia" onerror="this.outerHTML='A'">
+          <img src="logo.png" alt="Alexia" onerror="this.outerHTML='A'">
         </div>
         <div class="bubble typing-bubble">
           <span class="dot-1"></span>
