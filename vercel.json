@@ -1,12 +1,3 @@
 {
-  "version": 2,
-  "outputDirectory": ".",
-  "headers": [
-    {
-      "source": "/public/(.*)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0" }
-      ]
-    }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
