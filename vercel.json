@@ -1,10 +1,12 @@
 {
-  "outputDirectory": ".",
+  "version": 2,
   "headers": [
     {
-      "source": "/public/inicio.mp4",
+      "source": "/public/(.*)",
       "headers": [
-        { "key": "Content-Type", "value": "video/mp4" }
+        { "key": "Cache-Control", "value": "public, max-age=0" }
       ]
     }
   ]
+}
+
