@@ -36,7 +36,7 @@ if not GOOGLE_API_KEY:
 
 # ─── Configuración ───────────────────────────────────────────────────────────
 DB_DIR = os.path.join(BASE_DIR, "chroma_db")
-MAX_HISTORY = 10
+MAX_HISTORY = 25
 RETRIEVER_K = 4
 
 if not os.path.exists(DB_DIR):
