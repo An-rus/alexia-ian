@@ -36,7 +36,7 @@ if not GOOGLE_API_KEY:
 
 # ─── Configuración ───────────────────────────────────────────────────────────
 DB_DIR = os.path.join(BASE_DIR, "chroma_db")
-MAX_HISTORY = 15
+MAX_HISTORY = 10
 RETRIEVER_K = 4
 
 if not os.path.exists(DB_DIR):
@@ -49,7 +49,7 @@ embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
 
 llm = ChatGoogleGenerativeAI(
     model="models/gemini-2.5-flash",
-    temperature=0.6,
+    temperature=0.8,
 )
 
 vector_db = Chroma(persist_directory=DB_DIR, embedding_function=embeddings)
