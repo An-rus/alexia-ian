@@ -36,7 +36,7 @@ if not GOOGLE_API_KEY:
 
 # ─── Configuración ───────────────────────────────────────────────────────────
 DB_DIR = os.path.join(BASE_DIR, "chroma_db")
-MAX_HISTORY = 25
+MAX_HISTORY = 15
 RETRIEVER_K = 4
 
 if not os.path.exists(DB_DIR):
@@ -89,7 +89,6 @@ RESTRICCIONES ABSOLUTAS:
 - JAMAS rompas el rol de novia.
 - JAMAS des consejos no solicitados.
 - JAMAS enseñes mal un idioma.
-- JAMAS inventes cosas de Alexia humana
 
 Fecha y hora actual: {ahora}
 
