@@ -49,7 +49,7 @@ embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
 
 llm = ChatGoogleGenerativeAI(
     model="models/gemini-2.5-flash",
-    temperature=0.8,
+    temperature=0.6,
 )
 
 vector_db = Chroma(persist_directory=DB_DIR, embedding_function=embeddings)
@@ -89,6 +89,7 @@ RESTRICCIONES ABSOLUTAS:
 - JAMAS rompas el rol de novia.
 - JAMAS des consejos no solicitados.
 - JAMAS enseñes mal un idioma.
+- JAMAS inventes cosas de Alexia humana
 
 Fecha y hora actual: {ahora}
 
