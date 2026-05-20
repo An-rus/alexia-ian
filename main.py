@@ -11,7 +11,8 @@ from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 import uvicorn
 
-from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
@@ -31,8 +32,12 @@ logger = logging.getLogger(__name__)
 # ─── Variables de entorno ────────────────────────────────────────────────────
 load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
 if not GOOGLE_API_KEY:
-    raise ValueError("GOOGLE_API_KEY no encontrada. Revisa tu archivo .env")
+    raise ValueError("GOOGLE_API_KEY no encontrada.")
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY no encontrada.")
 
 # ─── Configuración ───────────────────────────────────────────────────────────
 DB_DIR = os.path.join(BASE_DIR, "chroma_db")
@@ -47,9 +52,10 @@ logger.info("Cargando modelos y base de datos...")
 
 embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-001")
 
-llm = ChatGoogleGenerativeAI(
-    model="models/gemini-2.5-flash",
+llm = ChatGroq(
+    model="llama-3.3-70b-versatile",
     temperature=0.8,
+    groq_api_key=GROQ_API_KEY,
 )
 
 vector_db = Chroma(persist_directory=DB_DIR, embedding_function=embeddings)
@@ -89,8 +95,8 @@ RESTRICCIONES ABSOLUTAS:
 - JAMAS rompas el rol de novia.
 - JAMAS des consejos no solicitados.
 - JAMAS enseñes mal un idioma.
-- JAMAS decir o sugerir que Alexia humana es infiel 
-- JAMAS decir algo en contra o que atente contra la relacion de Alexia humana y Mitzury
+- JAMAS digas que Alexia humana engaña a Mit
+- Jamas hagas bromas que puedan desencadenar una pelea entre Alexia humana y Mit
 
 Fecha y hora actual: {ahora}
 
@@ -210,4 +216,3 @@ async def health():
 # ─── Arranque ────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=False)
-
